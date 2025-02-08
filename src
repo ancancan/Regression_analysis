@@ -1,0 +1,23 @@
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import Lasso
+from sklearn.linear_model import LassoLars
+import sklearn.linear_model
+inputfile = 'data.csv'
+data = pd.read_csv(inputfile)
+data.head(5)
+data.tail(5)
+
+lasso = Lasso(1000)  #Call the Lasso() function and set the value of λ to 1000
+lasso.fit(data.iloc[:,0:13],data['y'])
+print('The correlation coefficient is:',np.round(lasso.coef_,5)) 
+print('The number of non-zero correlation coefficients is:',np.sum(lasso.coef_ != 0)) 
+
+mask = lasso.coef_ != 0  # Return a Boolean array indicating whether the correlation coefficient is zero
+print('Is the correlation coefficient zero:',mask)
+
+outputfile ='new_reg_data.csv'
+mask = np.append(mask,True)
+new_reg_data = data.iloc[:, mask]  # Return data with non-zero correlation coefficient
+new_reg_data.to_csv(outputfile,index=False)  # Storing data
+print('The dimensions of the output data are:',new_reg_data.shape)  # View the dimensions of the output data
